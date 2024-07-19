@@ -1,6 +1,4 @@
 import { Command } from "@colyseus/command";
-import { WorldState } from "../rooms/schema/WorldState";
-import { PlayerState } from "../rooms/schema/PlayerState";
 import { AlgoritcomCity } from "../rooms/AlgoritcomCity";
 import { Client } from "colyseus";
 
@@ -16,16 +14,11 @@ export class CmdMovement extends Command<
 
   execute(payload: any) {
     let player = this.state.players.get(payload.client.sessionId);
-    console.log(
-      "Player moved",
-      player.sessionId,
-      payload.x,
-      payload.y,
-      payload.z
-    );
-    player.position.x = payload.x;
-    player.position.y = payload.y;
-    player.position.z = payload.z;
+    const position = JSON.parse(payload.position);
+    console.log(position);
+    player.position.x = position.x;
+    player.position.y = position.y;
+    player.position.z = position.z;
 
     this.state.players.set(payload.client.sessionId, player);
     return;
