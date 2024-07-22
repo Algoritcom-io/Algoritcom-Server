@@ -15,9 +15,10 @@ export class CmdMovement extends Command<
 
   execute(payload: any) {
     let player = this.state.players.get(payload.client.sessionId);
-    player.position.x = payload.x;
-    player.position.y = payload.y;
-    player.position.z = payload.z;
+    console.log("CmdMovement", payload);
+    player.position.x = payload[0];
+    player.position.y = payload[1];
+    player.position.z = payload[2];
 
     this.state.players.set(payload.client.sessionId, player);
     return;
