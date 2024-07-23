@@ -8,22 +8,12 @@ import { playground } from "@colyseus/playground";
 import { AlgoritcomCity } from "./rooms/AlgoritcomCity";
 
 export default config({
+  getId: () => "algoritcom-metaverse",
   initializeGameServer: (gameServer) => {
-    /**
-     * Define your room handlers:
-     */
     gameServer.define("three-city", AlgoritcomCity);
   },
 
   initializeExpress: (app) => {
-    /**
-     * Bind your custom express routes here:
-     * Read more: https://expressjs.com/en/starter/basic-routing.html
-     */
-    app.get("/hello_world", (req, res) => {
-      res.send("It's time to kick ass and chew bubblegum!");
-    });
-
     /**
      * Use @colyseus/playground
      * (It is not recommended to expose this route in a production environment)
