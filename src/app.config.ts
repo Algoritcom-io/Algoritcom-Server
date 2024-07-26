@@ -5,12 +5,13 @@ import { playground } from "@colyseus/playground";
 /**
  * Import your Room files
  */
-import { AlgoritcomCity } from "./rooms/AlgoritcomCity";
+import { World } from "./rooms/World";
 
 export default config({
   getId: () => "algoritcom-metaverse",
   initializeGameServer: (gameServer) => {
-    gameServer.define("three-city", AlgoritcomCity);
+    gameServer.define("newcop", World);
+    gameServer.define("algoritcomcity", World);
   },
 
   initializeExpress: (app) => {

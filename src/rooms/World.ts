@@ -5,7 +5,7 @@ import { Dispatcher } from "@colyseus/command";
 import { CmdMovement } from "../commands/WorldCmd";
 import { PlayerStatus } from "./enums/PlayerStatus";
 
-export class AlgoritcomCity extends Room<WorldState> {
+export class World extends Room<WorldState> {
   dispatcher = new Dispatcher(this);
 
   constructor() {

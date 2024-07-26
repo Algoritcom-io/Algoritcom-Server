@@ -1,6 +1,6 @@
 import { Command } from "@colyseus/command";
 
-import { AlgoritcomCity } from "../rooms/AlgoritcomCity";
+import { AlgoritcomCity } from "../rooms/World";
 import { Client } from "colyseus";
 import { AnimationData, AxisData } from "../rooms/schema/PlayerState";
 
