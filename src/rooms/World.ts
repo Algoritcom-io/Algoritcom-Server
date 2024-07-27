@@ -15,7 +15,7 @@ export class World extends Room<WorldState> {
 
   onCreate(options: any) {
     this.setState(new WorldState());
-    this.onMessage("movementData", this.handleCmdMovement.bind(this));
+    this.onMessage("move", this.handleCmdMovement.bind(this));
   }
 
   onJoin(client: Client, options: any) {
@@ -23,10 +23,6 @@ export class World extends Room<WorldState> {
     const player = new PlayerState(client.sessionId);
     player.sessionId = client.sessionId;
     player.status = PlayerStatus.CONNECTED;
-
-    player.position.x = generateRandomInteger(-30, 30);
-    player.position.y = 1.2;
-    player.position.z = generateRandomInteger(-30, 30);
 
     this.state.players.set(client.sessionId, player);
   }
