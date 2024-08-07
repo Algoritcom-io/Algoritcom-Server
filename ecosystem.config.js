@@ -9,7 +9,7 @@ const os = require("os");
 module.exports = {
   apps: [
     {
-      name: "colyseus-app",
+      name: "socket",
       script: "dist/server/server.js",
       time: true,
       watch: false,
