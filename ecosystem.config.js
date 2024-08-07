@@ -16,7 +16,7 @@ module.exports = {
       instances: os.cpus().length,
       exec_mode: "fork",
       wait_ready: true,
-      env_production: {
+      env_dev: {
         NODE_ENV: "dev",
         PORT: 2567,
         MAX_PLAYERS: 100,
