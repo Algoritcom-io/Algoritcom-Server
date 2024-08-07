@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import * as errors from "./errors.json";
 import { playerEncode } from "./helpers";
 import customParser from "socket.io-msgpack-parser";
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 2567;
 
 const app = express();
 const server = createServer(app);
