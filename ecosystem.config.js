@@ -10,7 +10,7 @@ module.exports = {
   apps: [
     {
       name: "socket",
-      script: "dist/server/server.js",
+      script: "dist/main.js",
       time: true,
       watch: false,
       instances: os.cpus().length,
