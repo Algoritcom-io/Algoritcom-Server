@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "outDir": "build",
-    "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "strict": true,
-    "allowJs": true,
-    "strictNullChecks": false,
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "esnext",
+    "module": "commonjs",
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": false
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
   },
   "include": [
-    "src"
-  ]
+    "./*.js",
+    "src/**/*.ts",
+    "test/**/*.ts",
+  ],
 }
