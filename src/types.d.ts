@@ -2,6 +2,7 @@ import { Vector3, Quaternion } from "three";
 
 interface Player {
   id: string;
+  sessionId: string;
   position: { x: number; y: number; z: number };
   rotation: { x: number; y: number; z: number; w: number };
   animation: string;

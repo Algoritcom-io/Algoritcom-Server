@@ -48,7 +48,8 @@ const createRoom = (roomName: string): Room => {
 gameServer.on("connection", (socket: any) => {
   try {
     const player: Player = {
-      id: socket.id,
+      id: socket.handshake.query.id,
+      sessionId: socket.id,
       name: socket.handshake.query.name,
       position: JSON.parse(socket.handshake.query.position),
       rotation: JSON.parse(socket.handshake.query.rotation),
@@ -80,7 +81,6 @@ gameServer.on("connection", (socket: any) => {
         console.log(`Player ${player?.name} has joined the room ${roomName}`);
         socket.join(roomName);
         playerRoom.set(socket.id, roomName);
-        console.dir(player);
         socket.to(roomName).emit("player-joined", player);
 
         const playersInRoom = gameServer.adapter.rooms.get(roomName);
@@ -133,9 +133,9 @@ gameServer.on("connection", (socket: any) => {
         player.position = data.position;
         player.rotation = data.rotation;
         console.log(
-          `Player ${player.name} moved to ${data.position?.x} ${data.position?.y} ${data.position?.z} - rotation:${data.rotation} - animation: ${data.animation}`
+          `Player sessionId:${player.sessionId} - ${player.name} moved to ${data.position?.x} ${data.position?.y} ${data.position?.z} - animation: ${data.animation}`
         );
-        socket.to(room).emit(`player-moved-${player.id}`, player);
+        socket.to(room).emit(`player-moved-${player.sessionId}`, player);
       }
     });
 
