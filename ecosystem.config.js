@@ -20,6 +20,8 @@ module.exports = {
         NODE_ENV: "dev",
         PORT: 2567,
         MAX_PLAYERS: 100,
+        SSL_CERT: "/etc/letsencrypt/live/colyseus.algoridev.com/fullchain.pem",
+        SSL_KEY: "/etc/letsencrypt/live/colyseus.algoridev.com/privkey.pem",
       },
     },
   ],

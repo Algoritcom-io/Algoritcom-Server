@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 2567;
 const app = express();
 const server = createServer(app);
 app.set("port", PORT);
+app.set("trust proxy", true);
 
 const players = new Map<string, Player>();
 const roomsData = new Map<string, Room>();
