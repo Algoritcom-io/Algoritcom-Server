@@ -109,6 +109,7 @@ games.on("connection", (socket: any) => {
 
     socket.on("player-move", (data: Move) => {
       const room = playerRoom.get(socket.id);
+      console.log(room)
       const player = players.get(socket.id);
       if (room && player) {
         player.animation = data.animation;
@@ -117,7 +118,7 @@ games.on("connection", (socket: any) => {
         console.log(
           `Player sessionId:${player.sessionId} - ${player.name} moved to ${data.position?.x} ${data.position?.y} ${data.position?.z} - animation: ${data.animation}`
         );
-        socket.to(room).emit(`player-moved-${player.sessionId}`, player);
+        socket.to(room.name).emit(`player-moved-${player.sessionId}`, player);
       }
     });
 
