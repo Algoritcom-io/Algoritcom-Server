@@ -11,6 +11,7 @@ interface Player {
 }
 
 interface Room {
+  namespace: string;
   name: string;
   count: number;
   max: number;
@@ -25,4 +26,9 @@ interface Move {
 
 interface Server {
   rooms: Map<string, Room>;
+}
+
+interface PlayerRoom {
+  namespace: string;
+  name: string;
 }
