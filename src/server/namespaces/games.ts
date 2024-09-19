@@ -1,4 +1,5 @@
-import { Move, Player, Room } from "../../types";
+import { Move, Player } from "../../types/player";
+import { Room } from "../../types/room";
 import { io, players, playerRoom } from "../server";
 import * as errors from "../errors.json";
 

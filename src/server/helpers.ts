@@ -1,4 +1,4 @@
-import { Player } from "../types";
+import { Player } from "../types/player";
 
 export function playerEncode(player: Player) {
   const data = {
