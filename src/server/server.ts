@@ -1,4 +1,5 @@
-import { Move, Player, PlayerRoom, Room } from "../types";
+import { Move, Player, PlayerRoom } from "../types/player";
+import { Room } from "../types/room";
 import express from "express";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
@@ -12,6 +13,7 @@ app.set("trust proxy", true);
 
 const players = new Map<string, Player>();
 const playerRoom = new Map<string, PlayerRoom>();
+const users = new Map<string, string>();
 
 const io = new Server(server, {
   parser: customParser,
@@ -20,4 +22,4 @@ const io = new Server(server, {
   },
 });
 
-export { io, app, server, players, playerRoom };
+export { io, app, server, users, players, playerRoom };

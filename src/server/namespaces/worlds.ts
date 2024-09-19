@@ -1,4 +1,5 @@
-import { Move, Player, Room } from "../../types";
+import { Move, Player } from "../../types/player";
+import { Room } from "../../types/room";
 import { io, players, playerRoom } from "../server";
 import * as errors from "../errors.json";
 
@@ -117,7 +118,7 @@ worlds.on("connection", (socket: any) => {
         console.log(
           `Player sessionId:${player.sessionId} - ${player.name} moved to ${data.position?.x} ${data.position?.y} ${data.position?.z} - animation: ${data.animation}`
         );
-        socket.to(room).emit(`player-moved-${player.sessionId}`, player);
+        socket.to(room.name).emit(`player-moved-${player.sessionId}`, player);
       }
     });
 
