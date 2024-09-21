@@ -9,15 +9,8 @@ export interface Player {
   name: string;
   modelUrl: string;
 }
-
-export interface PlayerRoom {
-  namespace: string;
-  name: string;
-}
-
-export interface Move {
-  room: string;
-  position: Vector3;
-  rotation: Quaternion;
+export interface PlayerMove {
+  position: { x: number; y: number; z: number };
+  rotation: { x: number; y: number; z: number; w: number };
   animation: string;
 }

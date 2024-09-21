@@ -1,6 +1,5 @@
 import { app, server } from "./server/server";
-import "./server/namespaces/games";
-import "./server/namespaces/worlds";
+import "./server/worlds";
 
 const port = app.get("port");
 
