@@ -1,5 +1,0 @@
-export enum PlayerStatus {
-  CONNECTING = "CONNECTING",
-  CONNECTED = "CONNECTED",
-  DISCONNECTED = "DISCONNECTED",
-}
