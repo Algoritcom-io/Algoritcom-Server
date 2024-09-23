@@ -1,30 +1,21 @@
 import { WorldTypes } from "../enums";
 import { Player } from "./player";
-import { World } from "./worlds";
+import { Settings } from "./settings";
+import { ISpace, IWorld } from "./worlds";
 
-interface Spawn {
-  position: { x: number; y: number; z: number };
-  rotation: { x: number; y: number; z: number; w: number };
-}
-
-export interface GameInstance {
+export interface IGameInstance {
   id: string;
   players: Set<string, Player>;
-  inGame?: boolean;
+  gameStarted: boolean;
+  timer?: ReturnType<typeof setTimeout>;
   items?: any[];
 }
 
-export interface Game extends Pick<World, "maxPlayers" | "name" | "type"> {
-  matchmaking: boolean;
-  queue: Player[];
-  instances: Map<string, GameInstance>;
-  spawnPoints: Spawn[];
-  timer: any;
-  countdown: number;
-  items?: any[];
+export interface IGame extends ISpace {
+  instances: Map<string, IGameInstance>;
 }
 
-export interface JionGameData {
+export interface JoinGameData {
   worldName: string;
   gameName: string;
 }
