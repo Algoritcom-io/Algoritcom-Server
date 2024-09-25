@@ -25,7 +25,7 @@ export class WorldServer implements IWorld {
   public async loadSettings() {
     try {
       const settings = await axios.get(
-        `${process.env.NEXT_PUBLIC_BUCKET_REVAMP_URL}/worlds/${this.name}/settings.json`
+        `${process.env.BACKEND_URL}/worlds/${this.name}/settings.json`
       );
       this.settings = settings.data;
       this.status = "ready";

@@ -27,7 +27,7 @@ export class GameServer implements IGame {
   public async loadSettings() {
     try {
       const settings = await axios.get(
-        `${process.env.NEXT_PUBLIC_BUCKET_REVAMP_URL}/games/${this.name}/settings.json`
+        `${process.env.BACKEND_URL}/games/${this.name}/settings.json`
       );
       this.settings = settings.data;
       this.status = "ready";
@@ -41,7 +41,11 @@ export class GameServer implements IGame {
   }
 
   public createInstance(): GameInstance {
-    const instance = new GameInstance(this.name, this.settings?.items);
+    const instance = new GameInstance(
+      this.name,
+      this.deleteInstance.bind(this),
+      this.settings?.items
+    );
     this.instances.set(instance.id, instance);
     return instance;
   }
@@ -62,5 +66,10 @@ export class GameServer implements IGame {
       instance = this.createInstance();
     }
     return instance;
+  }
+
+  public deleteInstance(id: string) {
+    this.instances.delete(id);
+    logger.info(`Game ${this.name} instance ${id} deleted`);
   }
 }

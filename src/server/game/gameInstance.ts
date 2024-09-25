@@ -13,12 +13,18 @@ export class GameInstance implements IGameInstance {
   public timer?: ReturnType<typeof setInterval>;
   public time = 60;
   public items?: Items[];
+  public deleteInstance: (id: string) => void;
 
-  constructor(gameName: string, items?: Items[]) {
+  constructor(
+    gameName: string,
+    deleteInstance: (id: string) => void,
+    items?: Items[]
+  ) {
     this.id = gameName + "_" + uuidv4().replace(/-/g, "").substring(0, 10);
     this.items = items;
     this.timer = this.startTimer();
     this.players = new Map();
+    this.deleteInstance = deleteInstance;
     logger.info(`Game ${gameName} instance ${this.id} created`);
   }
 
@@ -78,9 +84,11 @@ export class GameInstance implements IGameInstance {
           `Game ${this.id} start in ${this.time} seconds - ${this.players.size} players`
         );
         io.sockets.to(this.id).emit("game-start-tick", this.time);
+        if (Array.from(this.players.values()).length < 1) {
+          this.endGame();
+        }
       } else if (this.time === 0) {
         this.startGame();
-        clearInterval(this.timer);
       }
     }, 1000));
   }
@@ -88,7 +96,10 @@ export class GameInstance implements IGameInstance {
   public endGame() {
     this.gameStarted = false;
     io.sockets.to(this.id).emit("game-end");
+    clearInterval(this.timer);
+    io.socketsLeave(this.id);
     logger.warning(`Game ${this.id} ended`);
+    this.deleteInstance(this.id);
   }
 
   public sendInitalConfig(playerId: string) {
