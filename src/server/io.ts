@@ -52,6 +52,14 @@ io.on("connection", (socket) => {
     serverController.leavePlayerFromWorld(socket.id);
   });
 
+  socket.on("game-player-ready", () => {
+    serverController.JoinGameInstance(socket.id);
+  });
+
+  socket.on("game-message", (data: any) => {
+    serverController.message(socket.id, data);
+  });
+
   /* Disconnect */
 
   socket.on("disconnect", () => {

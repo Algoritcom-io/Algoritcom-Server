@@ -26,10 +26,10 @@ export class GameServer implements IGame {
 
   public async loadSettings() {
     try {
-      const settings = await axios.get(
+      const response = await axios.get(
         `${process.env.BACKEND_URL}/games/${this.name}/settings.json`
       );
-      this.settings = settings.data;
+      this.settings = response.data;
       this.status = "ready";
       logger.success(`Game ${this.name} ready`);
     } catch (error: any) {
@@ -60,7 +60,8 @@ export class GameServer implements IGame {
 
   public getAvailableInstance(): GameInstance {
     let instance = Array.from(this.instances.values()).filter(
-      (instance) => !instance.gameStarted
+      (instance) =>
+        !instance.gameStarted && instance.players.size < this.maxPlayers
     )[0];
     if (!instance) {
       instance = this.createInstance();

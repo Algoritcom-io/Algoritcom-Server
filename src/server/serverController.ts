@@ -70,19 +70,45 @@ class ServerController {
       game = new GameServer(`${data.worldName}/${data.gameName}`);
       this.games.set(`${data.worldName}/${data.gameName}`, game);
     }
-    const instance = game.getAvailableInstance();
+
     player.inWorld.name = game.name;
     player.inWorld.type = game.type;
-    player.inWorld.instance = instance.id;
-    instance.addPlayer(playerID);
+    player.inWorld.instance = "";
+    logger.info(`Player ${playerID} joined game ${game.name}`);
+  }
+
+  public JoinGameInstance(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = game.getAvailableInstance();
+      player.inWorld.instance = instance.id;
+      instance.addPlayer(playerID);
+    }
   }
 
   public leavePlayerFromGame(playerID: string) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
     if (player && game) {
-      game.getInstance(player.inWorld.instance).removePlayer(playerID);
+      try {
+        game.getInstance(player.inWorld.instance).removePlayer(playerID);
+      } catch (error: any) {
+        logger.error(error.message);
+      }
       playerController.removePlayer(playerID);
+    }
+  }
+
+  public message(playerID: string, data: any) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    logger.info(`Message from player ${playerID} - ${data.type}`);
+    if (player && game) {
+      const socket = player.getSocket();
+      if (socket) {
+        socket.to(player.inWorld.instance).emit("game-message", data);
+      }
     }
   }
 }

@@ -72,6 +72,7 @@ export class GameInstance implements IGameInstance {
 
   public startGame() {
     this.gameStarted = true;
+    clearInterval(this.timer);
     io.sockets.to(this.id).emit("game-start");
     logger.info(`Game ${this.id} started`);
   }
@@ -104,9 +105,11 @@ export class GameInstance implements IGameInstance {
 
   public sendInitalConfig(playerId: string) {
     const player = playerController.getPlayer(playerId);
+    console.log(this.items);
     if (!player) {
       throw new Error("Player not found");
     }
+
     io.sockets.to(player.sessionId).emit("game-config", this.items);
   }
 }

@@ -44,4 +44,8 @@ export class Player implements IPlayer {
         .emit(`player-moved-${this.sessionId}`, this.getTransferData());
     }
   }
+
+  public getSocket() {
+    return io.sockets.sockets.get(this.sessionId);
+  }
 }
