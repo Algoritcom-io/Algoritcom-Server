@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
       playerController.createPlayer(
         `${socket.handshake.query.id}`,
         `${socket.handshake.query.name}`,
+        `${socket.handshake.query.modelUrl}`,
         socket.id
       );
     }

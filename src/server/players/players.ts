@@ -10,10 +10,17 @@ class PlayerController {
     logger.warning("Player Controller initialized");
   }
 
-  public createPlayer(id: string, name: string, sessionId: string): IPlayer {
-    const player = new Player(id, name, sessionId);
+  public createPlayer(
+    id: string,
+    name: string,
+    modelURL: string,
+    sessionId: string
+  ): IPlayer {
+    const player = new Player(id, name, sessionId, modelURL);
     this.players.set(sessionId, player);
-    logger.success(`Player ${name} created (sessionId: ${sessionId})`);
+    logger.success(
+      `Player ${name} created (sessionId: ${sessionId}) - model: ${modelURL}`
+    );
     return player;
   }
 
