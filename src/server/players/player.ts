@@ -1,6 +1,7 @@
 import { WorldTypes } from "../../enums";
 import { logger } from "../../logger/logger";
 import { IPlayer } from "../../types/player";
+import { Spawn } from "../../types/settings";
 import { io } from "../io";
 
 export class Player implements IPlayer {
@@ -12,6 +13,7 @@ export class Player implements IPlayer {
   animation: string;
   modelUrl: string;
   inWorld: { name: string; instance: string; type: WorldTypes | null };
+  initialPosition?: Spawn;
 
   constructor(id: string, name: string, sessionId: string, modelUrl: string) {
     this.id = id;
@@ -47,5 +49,18 @@ export class Player implements IPlayer {
 
   public getSocket() {
     return io.sockets.sockets.get(this.sessionId);
+  }
+
+  public getPlayerGameStart() {
+    return {
+      id: this.id,
+      name: this.name,
+      sessionId: this.sessionId,
+      position: this.position,
+      rotation: this.rotation,
+      animation: this.animation,
+      modelUrl: this.modelUrl,
+      initialPosition: this.initialPosition,
+    };
   }
 }

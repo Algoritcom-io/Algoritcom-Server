@@ -4,7 +4,8 @@ import { logger } from "../../logger/logger";
 import playerController from "../players/players";
 import { io } from "../io";
 import { Player } from "../players/player";
-import { Items } from "../../types/settings";
+import { Items, Spawn } from "../../types/settings";
+import { cloneDeep } from "lodash";
 
 export class GameInstance implements IGameInstance {
   public id: string;
@@ -13,15 +14,18 @@ export class GameInstance implements IGameInstance {
   public timer?: ReturnType<typeof setInterval>;
   public time = 60;
   public items?: Items[];
+  public spawns?: Spawn[];
   public deleteInstance: (id: string) => void;
 
   constructor(
     gameName: string,
     deleteInstance: (id: string) => void,
-    items?: Items[]
+    items?: Items[],
+    spawns?: Spawn[]
   ) {
     this.id = gameName + "_" + uuidv4().replace(/-/g, "").substring(0, 10);
     this.items = items;
+    this.spawns = cloneDeep(spawns);
     this.timer = this.startTimer();
     this.players = new Map();
     this.deleteInstance = deleteInstance;
@@ -37,13 +41,28 @@ export class GameInstance implements IGameInstance {
       const socket = io.sockets.sockets.get(player.sessionId);
       if (socket) {
         socket.join(this.id);
-        const playersData = [];
-        for (const player of this.players.values()) {
-          const playerData = player.getTransferData();
-          playersData.push(playerData);
-        }
         this.players.set(playerId, player);
-        socket.emit("world-players", playersData);
+        const playersData = [];
+
+        const players = Array.from(this.players.values());
+        for (let i = 0; i < players.length; i++) {
+          const player = players[i];
+          const spawn = this.spawns ? this.spawns[i] : null;
+          if (!player.initialPosition && spawn) {
+            player.position = {
+              x: spawn.ubication[0],
+              y: spawn.ubication[1],
+              z: spawn.ubication[2],
+            };
+            player.initialPosition = spawn;
+          }
+          playersData.push(player.getPlayerGameStart());
+        }
+
+        socket.emit(
+          "world-players",
+          playersData.filter((p) => p.sessionId !== playerId)
+        );
         io.sockets.to(this.id).emit("player-added", player);
         this.sendInitalConfig(playerId);
         logger.info(`Player ${playerId} joined game ${this.id}`);
@@ -105,7 +124,6 @@ export class GameInstance implements IGameInstance {
 
   public sendInitalConfig(playerId: string) {
     const player = playerController.getPlayer(playerId);
-    console.log(this.items);
     if (!player) {
       throw new Error("Player not found");
     }
