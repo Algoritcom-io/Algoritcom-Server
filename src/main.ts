@@ -1,10 +1,10 @@
-import { app, server } from "./server/server";
-import "./server/namespaces/games";
-import "./server/namespaces/worlds";
+import { app, http } from "./server/server";
+import "./server/io";
+import "./server/serverController";
 
 const port = app.get("port");
 
-server.listen(port, () => {
+http.listen(port, () => {
   /* eslint-disable no-console */
   console.log("Server is running on http://localhost:" + app.get("port"));
   /* eslint-enable no-console */
