@@ -10,7 +10,7 @@ export class WorldServer implements IWorld {
   public type: WorldTypes;
   public maxPlayers: number;
   public instances: Map<string, IWorldInstance>;
-  public status: "initializing" | "ready" | "error";
+  public status: "initializing" | "ready" | "noSettings" | "error";
   public settings?: Settings;
 
   constructor(name: string) {
@@ -31,7 +31,7 @@ export class WorldServer implements IWorld {
       this.status = "ready";
       logger.success(`Game ${this.name} ready`);
     } catch (error: any) {
-      this.status = "error";
+      this.status = "noSettings";
       logger.error(`Game ${this.name} error: ${error.message}`);
       throw error;
     }

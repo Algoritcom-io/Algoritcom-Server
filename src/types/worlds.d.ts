@@ -15,7 +15,7 @@ export interface ISpace {
   maxPlayers: number;
   settings?: Settings;
   type: WorldTypes;
-  status: "initializing" | "ready" | "error";
+  status: "initializing" | "ready" | "noSettings" | "error";
 
   private loadSettings(): Promise<void>;
   createInstance(): IWorldInstance;
