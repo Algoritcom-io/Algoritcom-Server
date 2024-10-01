@@ -9,17 +9,24 @@ export class GameServer implements IGame {
   public name: string;
   public type: WorldTypes;
   public maxPlayers: number;
-  public settings?: Settings;
+  public settings: Settings;
   public instances: Map<string, GameInstance>;
   public status: "initializing" | "ready" | "error";
 
   constructor(name: string) {
-    console.log(name);
     this.name = name;
     this.maxPlayers = Number(process.env.MAX_GAMES_PLAYERS) || 8;
     this.type = WorldTypes.game;
     this.instances = new Map();
     this.status = "initializing";
+    this.settings = {
+      items: [],
+      description: "",
+      spawns: [],
+      env: "",
+      teleports: [],
+      title: "",
+    };
     logger.info(`Game ${this.name} initializing`);
     this.loadSettings();
   }
@@ -44,7 +51,8 @@ export class GameServer implements IGame {
     const instance = new GameInstance(
       this.name,
       this.deleteInstance.bind(this),
-      this.settings?.items
+      this.settings.items || [],
+      this.settings.spawns || []
     );
     this.instances.set(instance.id, instance);
     return instance;

@@ -77,11 +77,11 @@ class ServerController {
     logger.info(`Player ${playerID} joined game ${game.name}`);
   }
 
-  public JoinGameInstance(playerID: string) {
+  public async JoinGameInstance(playerID: string) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
     if (player && game) {
-      const instance = game.getAvailableInstance();
+      const instance = await game.getAvailableInstance();
       player.inWorld.instance = instance.id;
       instance.addPlayer(playerID);
     }
