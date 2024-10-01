@@ -127,7 +127,8 @@ export class GameInstance implements IGameInstance {
     if (!player) {
       throw new Error("Player not found");
     }
+    const items = cloneDeep(this.items);
 
-    io.sockets.to(player.sessionId).emit("game-config", this.items);
+    io.sockets.to(player.sessionId).emit("game-config", items);
   }
 }
