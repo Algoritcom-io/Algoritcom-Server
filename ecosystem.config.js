@@ -22,7 +22,7 @@ module.exports = {
         MAX_WORLDS_PLAYERS: 100,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
-        BACKEND_URL: "https://platform-public.s3.eu-west-3.amazonaws.com",
+        BUCKET_URL: "https://platform-public.s3.eu-west-3.amazonaws.com",
         REDIS_HOST: "localhost",
         REDIS_PORT: 6379,
         REDIS_PASSWORD: "",
