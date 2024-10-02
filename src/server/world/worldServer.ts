@@ -15,7 +15,7 @@ export class WorldServer implements IWorld {
 
   constructor(name: string) {
     this.name = name;
-    this.maxPlayers = Number(process.env.MAX_WORLDS_PLAYERS) || 50;
+    this.maxPlayers = 8 || 50;
     this.type = WorldTypes.world;
     this.instances = new Map();
     this.status = "initializing";
@@ -25,7 +25,7 @@ export class WorldServer implements IWorld {
   public async loadSettings() {
     try {
       const settings = await axios.get(
-        `${process.env.BUCKET_URL}/worlds/${this.name}/settings.json`
+        `https://platform-public.s3.eu-west-3.amazonaws.com/worlds/${this.name}/settings.json`
       );
       this.settings = settings.data;
       this.status = "ready";

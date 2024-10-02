@@ -68,7 +68,7 @@
 //   try {
 //     const world = {
 //       instances: new Map(),
-//       maxPlayers: Number(process.env.MAX_WORLDS_PLAYERS) || 50,
+//       maxPlayers: Number(100) || 50,
 //       name: worldName,
 //       type: WorldTypes.world,
 //     };
