@@ -20,45 +20,77 @@ io.on("connection", (socket) => {
     socket.join("notifications");
     logger.info(`Joined general and notifications: ${socket.id}`);
     if (socket.handshake.query.id && socket.handshake.query.name) {
-      playerController.createPlayer(
-        `${socket.handshake.query.id}`,
-        `${socket.handshake.query.name}`,
-        `${socket.handshake.query.modelUrl}`,
-        socket.id
-      );
+      try {
+        playerController.createPlayer(
+          `${socket.handshake.query.id}`,
+          `${socket.handshake.query.name}`,
+          `${socket.handshake.query.modelUrl}`,
+          socket.id
+        );
+      } catch (error: any) {
+        logger.error(error?.message);
+      }
     }
   }
 
   /* World functions */
 
   socket.on("world-join", (data: JionWorldData) => {
-    serverController.joinPlayerToWorld(data, socket.id);
+    try {
+      serverController.joinPlayerToWorld(data, socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   socket.on("world-leave", () => {
-    serverController.leavePlayerFromWorld(socket.id);
+    try {
+      serverController.leavePlayerFromWorld(socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   socket.on("player-move", (data: IPlayerMove) => {
-    playerController.move(data, socket.id);
+    try {
+      playerController.move(data, socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   /* Game functions */
 
   socket.on("game-join", (joinData: JoinGameData) => {
-    serverController.joinPlayerToGame(socket.id, joinData);
+    try {
+      serverController.joinPlayerToGame(socket.id, joinData);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   socket.on("game-leave", () => {
-    serverController.leavePlayerFromWorld(socket.id);
+    try {
+      serverController.leavePlayerFromWorld(socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   socket.on("game-player-ready", () => {
-    serverController.JoinGameInstance(socket.id);
+    try {
+      serverController.JoinGameInstance(socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   socket.on("game-message", (data: any) => {
-    serverController.message(socket.id, data);
+    try {
+      serverController.message(socket.id, data);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 
   /* Disconnect */
@@ -67,7 +99,11 @@ io.on("connection", (socket) => {
     socket.leave("general");
     socket.leave("notifications");
     logger.info(`Left general and notifications: ${socket.id}`);
-    serverController.leavePlayer(socket.id);
+    try {
+      serverController.leavePlayer(socket.id);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
   });
 });
 
