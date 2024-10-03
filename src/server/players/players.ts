@@ -48,13 +48,13 @@ class PlayerController {
       player.rotation.z = data.rotation.z;
       player.rotation.w = data.rotation.w;
       player.animation = data.animation;
-      logger.debug(
-        `Player ${player.name} moved to [${data.position.x.toFixed(
-          1
-        )}, ${data.position.y.toFixed(1)}, ${data.position.z.toFixed(
-          1
-        )}] - animation: ${data.animation}`
-      );
+      // logger.debug(
+      //   `Player ${player.name} moved to [${data.position.x.toFixed(
+      //     1
+      //   )}, ${data.position.y.toFixed(1)}, ${data.position.z.toFixed(
+      //     1
+      //   )}] - animation: ${data.animation}`
+      // );
       player.emitPlayerMoved();
     }
   }
