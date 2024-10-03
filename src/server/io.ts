@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { http } from "./server";
+import { httpsServer } from "./server";
 import { logger } from "../logger/logger";
 import playerController from "./players/players";
 import serverController from "./serverController";
@@ -7,7 +7,7 @@ import { JionWorldData } from "../types/worlds";
 import { IPlayerMove } from "../types/player";
 import { JoinGameData } from "../types/games";
 
-const io = new Server(http, {
+const io = new Server(httpsServer, {
   // parser: customParser,
   cors: {
     origin: "*",
