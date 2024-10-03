@@ -100,6 +100,21 @@ class ServerController {
     }
   }
 
+  public gameFinished(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = game.getInstance(player.inWorld.instance);
+      if (instance) {
+        instance.endGame();
+        player.inWorld.instance = "";
+        player.inWorld.name = "";
+        player.inWorld.type = null;
+        logger.info(`Game finished for player ${playerID}`);
+      }
+    }
+  }
+
   public message(playerID: string, data: any) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
