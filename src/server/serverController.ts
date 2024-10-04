@@ -138,13 +138,15 @@ class ServerController {
     }
   }
 
-  public writing(playerID: string, data: any) {
+  public chat(playerID: string, data: any) {
     const player = playerController.getPlayer(playerID);
-    const game = this.games.get(player.inWorld.name);
-    if (player && game) {
+    if (player) {
       const socket = player.getSocket();
+      logger.info(`Chat from player ${playerID} - ${data.message}`);
       if (socket) {
-        socket.to(player.inWorld.instance).emit("writing", data);
+        socket
+          .to(player.inWorld.instance)
+          .emit(`player-chat-${player.sessionId}`, data);
       }
     }
   }

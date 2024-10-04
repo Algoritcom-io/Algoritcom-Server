@@ -65,8 +65,8 @@ io.on("connection", (socket) => {
     serverController.gameFinished(socket.id);
   });
 
-  socket.on("writing", (data: any) => {
-    serverController.writing(socket.id, data);
+  socket.on("chat", (data: any) => {
+    serverController.chat(socket.id, data);
   });
 
   /* Disconnect */
