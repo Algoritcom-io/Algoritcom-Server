@@ -93,6 +93,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("finish-restart", () => {
+    serverController.gameFinished(socket.id);
+  });
+
+  socket.on("chat", (data: any) => {
+    serverController.chat(socket.id, data);
+  });
+
   /* Disconnect */
 
   socket.on("disconnect", () => {

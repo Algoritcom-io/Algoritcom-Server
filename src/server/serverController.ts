@@ -100,6 +100,32 @@ class ServerController {
     }
   }
 
+  public async finishAndStartGame(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = await game.getInstance(player.inWorld.instance);
+      if (instance) {
+        instance.removePlayer(playerID);
+      }
+      this.JoinGameInstance(playerID);
+    }
+  }
+
+  public async gameFinished(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = await game.getInstance(player.inWorld.instance);
+      if (instance) {
+        player.inWorld.instance = "";
+        player.inWorld.name = "";
+        player.inWorld.type = null;
+        logger.info(`Game finished for player ${playerID}`);
+      }
+    }
+  }
+
   public message(playerID: string, data: any) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
@@ -108,6 +134,19 @@ class ServerController {
       const socket = player.getSocket();
       if (socket) {
         socket.to(player.inWorld.instance).emit("game-message", data);
+      }
+    }
+  }
+
+  public chat(playerID: string, data: any) {
+    const player = playerController.getPlayer(playerID);
+    if (player) {
+      const socket = player.getSocket();
+      logger.info(`Chat from player ${playerID} - ${data.message}`);
+      if (socket) {
+        socket
+          .to(player.inWorld.instance)
+          .emit(`player-chat-${player.sessionId}`, data);
       }
     }
   }

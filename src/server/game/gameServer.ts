@@ -33,6 +33,7 @@ export class GameServer implements IGame {
 
   public async loadSettings() {
     try {
+      console.log(process.env);
       const response = await axios.get(
         `https://platform-public.s3.eu-west-3.amazonaws.com/games/${this.name}/settings.json`
       );

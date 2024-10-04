@@ -87,6 +87,9 @@ export class GameInstance implements IGameInstance {
       logger.warning(`Player ${playerId} left game ${this.id}`);
     }
     this.players.delete(playerId);
+    if (this.players.size < 1) {
+      this.endGame();
+    }
   }
 
   public startGame() {
@@ -127,7 +130,8 @@ export class GameInstance implements IGameInstance {
     if (!player) {
       throw new Error("Player not found");
     }
+    const items = cloneDeep(this.items);
 
-    io.sockets.to(player.sessionId).emit("game-config", this.items);
+    io.sockets.to(player.sessionId).emit("game-config", items);
   }
 }
