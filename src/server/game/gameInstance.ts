@@ -87,6 +87,9 @@ export class GameInstance implements IGameInstance {
       logger.warning(`Player ${playerId} left game ${this.id}`);
     }
     this.players.delete(playerId);
+    if (this.players.size < 1) {
+      this.endGame();
+    }
   }
 
   public startGame() {

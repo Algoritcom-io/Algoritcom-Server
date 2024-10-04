@@ -61,8 +61,12 @@ io.on("connection", (socket) => {
     serverController.message(socket.id, data);
   });
 
-  socket.on("end-game", () => {
+  socket.on("finish-restart", () => {
     serverController.gameFinished(socket.id);
+  });
+
+  socket.on("writing", (data: any) => {
+    serverController.writing(socket.id, data);
   });
 
   /* Disconnect */

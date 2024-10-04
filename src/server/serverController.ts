@@ -100,13 +100,24 @@ class ServerController {
     }
   }
 
-  public gameFinished(playerID: string) {
+  public async finishAndStartGame(playerID: string) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
     if (player && game) {
-      const instance = game.getInstance(player.inWorld.instance);
+      const instance = await game.getInstance(player.inWorld.instance);
       if (instance) {
-        instance.endGame();
+        instance.removePlayer(playerID);
+      }
+      this.JoinGameInstance(playerID);
+    }
+  }
+
+  public async gameFinished(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = await game.getInstance(player.inWorld.instance);
+      if (instance) {
         player.inWorld.instance = "";
         player.inWorld.name = "";
         player.inWorld.type = null;
@@ -123,6 +134,17 @@ class ServerController {
       const socket = player.getSocket();
       if (socket) {
         socket.to(player.inWorld.instance).emit("game-message", data);
+      }
+    }
+  }
+
+  public writing(playerID: string, data: any) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const socket = player.getSocket();
+      if (socket) {
+        socket.to(player.inWorld.instance).emit("writing", data);
       }
     }
   }
