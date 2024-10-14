@@ -2,6 +2,7 @@ import { WorldTypes } from "../enums";
 import { logger } from "../logger/logger";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
+import { sendUserMetric } from "./aws";
 import { GameServer } from "./game/gameServer";
 import playerController from "./players/players";
 import { WorldServer } from "./world/worldServer";
@@ -33,6 +34,8 @@ class ServerController {
     player.position = playerData.position;
     player.rotation = playerData.rotation;
     instance.addPlayer(socketID);
+
+    sendUserMetric(instance.id, instance.players.size);
   }
 
   public leavePlayer(socketID: string) {
