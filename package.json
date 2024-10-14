@@ -16,6 +16,7 @@
   "author": "Adrian Martinez",
   "dependencies": {
     "@types/three": "^0.167.1",
+    "aws-sdk": "^2.1691.0",
     "axios": "^1.7.7",
     "console-log-colors": "^0.5.0",
     "cors": "^2.8.5",
