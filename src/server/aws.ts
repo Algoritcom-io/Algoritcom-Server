@@ -8,12 +8,12 @@ export function sendUserMetric(instanceId: string, userCount: number) {
       MetricData: [
         {
           MetricName: "ActiveUserCount", // Nombre de la métrica
-          Dimensions: [
-            {
-              Name: "InstanceId",
-              Value: instanceId, // ID de la instancia donde se está ejecutando
-            },
-          ],
+          // Dimensions: [
+          //   {
+          //     Name: "InstanceId",
+          //     Value: instanceId, // ID de la instancia donde se está ejecutando
+          //   },
+          // ],
           Unit: "Count", // Unidad de la métrica
           Value: userCount, // Número actual de usuarios
         },

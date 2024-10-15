@@ -35,7 +35,7 @@ class ServerController {
     player.rotation = playerData.rotation;
     instance.addPlayer(socketID);
 
-    sendUserMetric(instance.id, instance.players.size);
+    // sendUserMetric(instance.id, instance.players.size);
   }
 
   public leavePlayer(socketID: string) {
