@@ -26,7 +26,6 @@ export class GameInstance implements IGameInstance {
     this.id = gameName + "_" + uuidv4().replace(/-/g, "").substring(0, 10);
     this.items = items;
     this.spawns = cloneDeep(spawns);
-    this.timer = this.startTimer();
     this.players = new Map();
     this.deleteInstance = deleteInstance;
     logger.info(`Game ${gameName} instance ${this.id} created`);
@@ -59,6 +58,13 @@ export class GameInstance implements IGameInstance {
           playersData.push(player.getPlayerGameStart());
         }
 
+        if (this.players.size > 1) {
+          this.timer = this.startTimer();
+        } else {
+          logger.info(`Game ${this.id} waiting for players`);
+          io.sockets.to(this.id).emit("game-waiting-for-players");
+        }
+
         socket.emit(
           "world-players",
           playersData.filter((p) => p.sessionId !== playerId)
@@ -86,7 +92,17 @@ export class GameInstance implements IGameInstance {
       socket.leave(this.id);
       logger.warning(`Player ${playerId} left game ${this.id}`);
     }
+    console.log("player size", this.players.size);
+    console.log("game started", this.gameStarted);
+
     this.players.delete(playerId);
+
+    if (this.gameStarted === false && this.players.size === 1) {
+      logger.info(`Game ${this.id} waiting for players`);
+      clearInterval(this.timer);
+      io.sockets.to(this.id).emit("game-waiting-for-players");
+    }
+
     if (this.players.size < 1) {
       this.endGame();
     }
@@ -100,7 +116,7 @@ export class GameInstance implements IGameInstance {
   }
 
   public startTimer(): ReturnType<typeof setInterval> {
-    return (this.timer = setInterval(() => {
+    return setInterval(() => {
       if (this.time > 0) {
         this.time--;
         logger.info(
@@ -113,7 +129,7 @@ export class GameInstance implements IGameInstance {
       } else if (this.time === 0) {
         this.startGame();
       }
-    }, 1000));
+    }, 1000);
   }
 
   public endGame() {
