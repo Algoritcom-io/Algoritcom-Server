@@ -58,13 +58,12 @@ export class GameInstance implements IGameInstance {
           playersData.push(player.getPlayerGameStart());
         }
 
-        if (this.players.size > 1) {
+        if (this.players.size > 1 && !this.gameStarted && !this.timer) {
           this.timer = this.startTimer();
         } else {
           logger.info(`Game ${this.id} waiting for players`);
           io.sockets.to(this.id).emit("game-waiting-for-players");
         }
-
         socket.emit(
           "world-players",
           playersData.filter((p) => p.sessionId !== playerId)
@@ -100,6 +99,7 @@ export class GameInstance implements IGameInstance {
     if (this.gameStarted === false && this.players.size === 1) {
       logger.info(`Game ${this.id} waiting for players`);
       clearInterval(this.timer);
+      this.timer = undefined;
       io.sockets.to(this.id).emit("game-waiting-for-players");
     }
 
@@ -111,6 +111,7 @@ export class GameInstance implements IGameInstance {
   public startGame() {
     this.gameStarted = true;
     clearInterval(this.timer);
+    this.timer = undefined;
     io.sockets.to(this.id).emit("game-start");
     logger.info(`Game ${this.id} started`);
   }
