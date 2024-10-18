@@ -58,11 +58,15 @@ export class GameInstance implements IGameInstance {
           playersData.push(player.getPlayerGameStart());
         }
 
-        if (this.players.size > 1 && !this.gameStarted && !this.timer) {
-          this.timer = this.startTimer();
-        } else {
+        if (this.players.size === 1 && !this.gameStarted && !this.timer) {
           logger.info(`Game ${this.id} waiting for players`);
           io.sockets.to(this.id).emit("game-waiting-for-players");
+        } else if (
+          this.players.size === 2 &&
+          !this.gameStarted &&
+          !this.timer
+        ) {
+          this.timer = this.startTimer();
         }
         socket.emit(
           "world-players",
