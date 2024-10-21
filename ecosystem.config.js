@@ -9,7 +9,7 @@ const os = require("os");
 module.exports = {
   apps: [
     {
-      name: "socket",
+      name: "server-platform",
       script: "dist/main.js",
       time: true,
       watch: false,
