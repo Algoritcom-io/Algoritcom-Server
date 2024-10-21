@@ -85,6 +85,7 @@ class ServerController {
 
     player.inWorld.name = game.name;
     player.inWorld.type = game.type;
+    player.modelUrl = data.modelUrl;
     player.inWorld.instance = "";
     logger.info(`Player ${playerID} joined game ${game.name}`);
   }

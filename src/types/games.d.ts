@@ -18,4 +18,5 @@ export interface IGame extends ISpace {
 export interface JoinGameData {
   worldName: string;
   gameName: string;
+  modelUrl: string;
 }
