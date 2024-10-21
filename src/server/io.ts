@@ -1,13 +1,16 @@
 import { Server } from "socket.io";
-import { httpsServer } from "./server";
+import { httpServer } from "./server";
 import { logger } from "../logger/logger";
 import playerController from "./players/players";
 import serverController from "./serverController";
 import { JionWorldData } from "../types/worlds";
 import { IPlayerMove } from "../types/player";
 import { JoinGameData } from "../types/games";
+import chatController from "./chat/chatController";
+import { WritingAction } from "../enums";
+import { Message } from "../types/chat";
 
-const io = new Server(httpsServer, {
+const io = new Server(httpServer, {
   // parser: customParser,
   cors: {
     origin: "*",
@@ -24,7 +27,6 @@ io.on("connection", (socket) => {
         playerController.createPlayer(
           `${socket.handshake.query.id}`,
           `${socket.handshake.query.name}`,
-          `${socket.handshake.query.modelUrl}`,
           socket.id
         );
       } catch (error: any) {
@@ -85,9 +87,9 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("game-message", (data: any) => {
+  socket.on("game-notification", (data: any) => {
     try {
-      serverController.message(socket.id, data);
+      serverController.gameNotifiaction(socket.id, data);
     } catch (error: any) {
       logger.error(error?.message);
     }
@@ -97,8 +99,12 @@ io.on("connection", (socket) => {
     serverController.gameFinished(socket.id);
   });
 
-  socket.on("chat", (data: any) => {
-    serverController.chat(socket.id, data);
+  socket.on("chat-message", (data: Message) => {
+    chatController.message(socket.id, data);
+  });
+
+  socket.on("chat-writing", (data: WritingAction) => {
+    chatController.writing(socket.id, data);
   });
 
   /* Disconnect */

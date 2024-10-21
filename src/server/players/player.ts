@@ -15,14 +15,14 @@ export class Player implements IPlayer {
   inWorld: { name: string; instance: string; type: WorldTypes | null };
   initialPosition?: Spawn;
 
-  constructor(id: string, name: string, sessionId: string, modelUrl: string) {
+  constructor(id: string, name: string, sessionId: string) {
     this.id = id;
     this.name = name;
     this.sessionId = sessionId;
     this.position = { x: 0, y: 0, z: 0 };
     this.rotation = { x: 0, y: 0, z: 0, w: 0 };
     this.animation = "idle";
-    this.modelUrl = modelUrl || "";
+    this.modelUrl = "";
     this.inWorld = { name: "", instance: "", type: null };
   }
 

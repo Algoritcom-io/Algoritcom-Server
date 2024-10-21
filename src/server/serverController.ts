@@ -1,5 +1,6 @@
 import { WorldTypes } from "../enums";
 import { logger } from "../logger/logger";
+import { ChatAction } from "../types/chat";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
 import { GameServer } from "./game/gameServer";
@@ -16,22 +17,33 @@ class ServerController {
     logger.warning("Server Controller initialized");
   }
 
-  public joinPlayerToWorld(playerData: JionWorldData, socketID: string) {
-    let world = this.worlds.get(playerData.worldName);
+  public joinPlayerToWorld(data: JionWorldData, socketID: string) {
+    console.log("joinPlayerToWorld", data.worldName, socketID);
+    let world = this.worlds.get(data.worldName);
     let player = playerController.getPlayer(socketID);
     if (!player) {
       throw new Error(`Player with id ${socketID} not found`);
     }
     if (!world) {
-      world = new WorldServer(playerData.worldName);
-      this.worlds.set(playerData.worldName, world);
+      world = new WorldServer(data.worldName);
+      this.worlds.set(data.worldName, world);
     }
     const instance = world.getAvailableInstance();
+    const spawns = world.settings?.spawns;
+    if (!spawns) {
+      throw new Error("Spawns not found");
+    }
+    const spawn = spawns[Math.floor(Math.random() * spawns.length)];
     player.inWorld.name = world.name;
     player.inWorld.type = world.type;
     player.inWorld.instance = instance.id;
-    player.position = playerData.position;
-    player.rotation = playerData.rotation;
+    player.position = {
+      x: spawn.ubication[0],
+      y: spawn.ubication[1],
+      z: spawn.ubication[2],
+    };
+    player.rotation = { x: 0, y: 0, z: 0, w: 0 };
+    player.modelUrl = data.modelUrl;
     instance.addPlayer(socketID);
   }
 
@@ -126,30 +138,30 @@ class ServerController {
     }
   }
 
-  public message(playerID: string, data: any) {
+  public gameNotifiaction(playerID: string, data: any) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
-    logger.info(`Message from player ${playerID} - ${data.type}`);
+    logger.info(`Notification from player ${playerID} - ${data.type}`);
     if (player && game) {
       const socket = player.getSocket();
       if (socket) {
-        socket.to(player.inWorld.instance).emit("game-message", data);
+        socket.to(player.inWorld.instance).emit("game-notification", data);
       }
     }
   }
 
-  public chat(playerID: string, data: any) {
-    const player = playerController.getPlayer(playerID);
-    if (player) {
-      const socket = player.getSocket();
-      logger.info(`Chat from player ${playerID} - ${data.message}`);
-      if (socket) {
-        socket
-          .to(player.inWorld.instance)
-          .emit(`player-chat-${player.sessionId}`, data);
-      }
-    }
-  }
+  // public actions(playerID: string, data: any) {
+  //   const player = playerController.getPlayer(playerID);
+  //   if (player) {
+  //     const socket = player.getSocket();
+  //     logger.info(`Actions from player ${playerID} - ${data.message}`);
+  //     if (socket) {
+  //       socket
+  //         .to(player.inWorld.instance)
+  //         .emit(`player-chat-${player.sessionId}`, data);
+  //     }
+  //   }
+  // }
 }
 
 const serverController = new ServerController();
