@@ -17,7 +17,7 @@ class ServerController {
     logger.warning("Server Controller initialized");
   }
 
-  public joinPlayerToWorld(data: JionWorldData, socketID: string) {
+  public async joinPlayerToWorld(data: JionWorldData, socketID: string) {
     console.log("joinPlayerToWorld", data.worldName, socketID);
     let world = this.worlds.get(data.worldName);
     let player = playerController.getPlayer(socketID);
@@ -26,6 +26,7 @@ class ServerController {
     }
     if (!world) {
       world = new WorldServer(data.worldName);
+      await world.loadSettings();
       this.worlds.set(data.worldName, world);
     }
     const instance = world.getAvailableInstance();
@@ -33,15 +34,13 @@ class ServerController {
     if (!spawns) {
       throw new Error("Spawns not found");
     }
-    const spawn = spawns[Math.floor(Math.random() * spawns.length)];
+
+    const spawn = await world.getAvailableSpawnPoint(instance.players);
+
     player.inWorld.name = world.name;
     player.inWorld.type = world.type;
     player.inWorld.instance = instance.id;
-    player.position = {
-      x: spawn.ubication[0],
-      y: spawn.ubication[1],
-      z: spawn.ubication[2],
-    };
+    player.position = spawn;
     player.rotation = { x: 0, y: 0, z: 0, w: 0 };
     player.modelUrl = data.modelUrl;
     instance.addPlayer(socketID);
@@ -150,19 +149,6 @@ class ServerController {
       }
     }
   }
-
-  // public actions(playerID: string, data: any) {
-  //   const player = playerController.getPlayer(playerID);
-  //   if (player) {
-  //     const socket = player.getSocket();
-  //     logger.info(`Actions from player ${playerID} - ${data.message}`);
-  //     if (socket) {
-  //       socket
-  //         .to(player.inWorld.instance)
-  //         .emit(`player-chat-${player.sessionId}`, data);
-  //     }
-  //   }
-  // }
 }
 
 const serverController = new ServerController();

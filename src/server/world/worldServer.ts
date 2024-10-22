@@ -4,6 +4,7 @@ import { Settings } from "../../types/settings";
 import { IWorld, IWorldInstance } from "../../types/worlds";
 import { logger } from "../../logger/logger";
 import { WorldInstance } from "./worldInstance";
+import { Player } from "../players/player";
 
 export class WorldServer implements IWorld {
   public name: string;
@@ -19,7 +20,6 @@ export class WorldServer implements IWorld {
     this.type = WorldTypes.world;
     this.instances = new Map();
     this.status = "initializing";
-    this.loadSettings();
   }
 
   public async loadSettings() {
@@ -59,5 +59,47 @@ export class WorldServer implements IWorld {
       instance = this.createInstance();
     }
     return instance;
+  }
+
+  public async getAvailableSpawnPoint(
+    players: Map<string, Player>
+  ): Promise<{ x: number; y: number; z: number }> {
+    const playersArray = Array.from(players.values());
+    const spawns = this.settings?.spawns;
+    if (!spawns) {
+      return { x: 0, y: 0, z: 0 };
+    }
+
+    const findSpawnPoint = (
+      index: number
+    ): { x: number; y: number; z: number } => {
+      if (index >= spawns.length) {
+        const spawn = spawns[Math.floor(Math.random() * spawns.length)];
+        return {
+          x: spawn.ubication[0] + Math.random() * 2 - 1,
+          y: spawn.ubication[1],
+          z: spawn.ubication[2] + Math.random() * 2 - 1,
+        };
+      }
+
+      const spawn = spawns[index];
+      for (const player of playersArray) {
+        const playerX = Number(player.position.x.toFixed(2));
+        const playerZ = Number(player.position.z.toFixed(2));
+        const spawnX = Number(spawn.ubication[0].toFixed(2));
+        const spawnZ = Number(spawn.ubication[2].toFixed(2));
+        if (playerX === spawnX && playerZ === spawnZ) {
+          return findSpawnPoint(index + 1);
+        }
+      }
+
+      return {
+        x: spawn.ubication[0],
+        y: spawn.ubication[1],
+        z: spawn.ubication[2],
+      };
+    };
+
+    return findSpawnPoint(0);
   }
 }
