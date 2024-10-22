@@ -33,7 +33,6 @@ export class GameServer implements IGame {
 
   public async loadSettings() {
     try {
-      console.log(process.env);
       const response = await axios.get(
         `https://platform-public.s3.eu-west-3.amazonaws.com/games/${this.name}/settings.json`
       );
@@ -41,9 +40,9 @@ export class GameServer implements IGame {
       this.status = "ready";
       logger.success(`Game ${this.name} ready`);
     } catch (error: any) {
-      console.log(error.message);
       this.status = "error";
       logger.error(`Game ${this.name} error`);
+      logger.error(error.message);
       throw error;
     }
   }

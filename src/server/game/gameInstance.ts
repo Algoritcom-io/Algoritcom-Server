@@ -95,8 +95,9 @@ export class GameInstance implements IGameInstance {
       socket.leave(this.id);
       logger.warning(`Player ${playerId} left game ${this.id}`);
     }
-    console.log("player size", this.players.size);
-    console.log("game started", this.gameStarted);
+    logger.debug(`Game ${this.id} players: ${this.players.size}`);
+    logger.info(`Player ${playerId} left game ${this.id}`);
+    logger.debug(`Game restarter: ${this.gameStarted}`);
 
     this.players.delete(playerId);
 

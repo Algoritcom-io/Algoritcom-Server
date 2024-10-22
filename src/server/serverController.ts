@@ -18,7 +18,7 @@ class ServerController {
   }
 
   public async joinPlayerToWorld(data: JionWorldData, socketID: string) {
-    console.log("joinPlayerToWorld", data.worldName, socketID);
+    logger.info(`Player ${socketID} joining world ${data.worldName}`);
     let world = this.worlds.get(data.worldName);
     let player = playerController.getPlayer(socketID);
     if (!player) {
