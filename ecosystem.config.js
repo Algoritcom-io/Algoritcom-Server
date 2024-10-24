@@ -20,7 +20,7 @@ module.exports = {
       // wait_ready: true,
       env_dev: {
         NODE_ENV: "dev",
-        HTTP_PORT: 443,
+        HTTP_PORT: 2567,
         MAX_WORLDS_PLAYERS: 100,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
@@ -28,6 +28,8 @@ module.exports = {
         REDIS_HOST: "localhost",
         REDIS_PORT: 6379,
         REDIS_PASSWORD: "",
+        SSL_CERT: "/etc/letsencrypt/live/server.algoridev.com/fullchain.pem",
+        SSL_KEY: "/etc/letsencrypt/live/server.algoridev.com/privkey.pem",
       },
       env_prod: {
         NODE_ENV: "production",
@@ -39,8 +41,8 @@ module.exports = {
         REDIS_HOST: "localhost",
         REDIS_PORT: 6379,
         REDIS_PASSWORD: "",
-        SSL_CERT: "/etc/letsencrypt/live/colyseus.algoridev.com/fullchain.pem",
-        SSL_KEY: "/etc/letsencrypt/live/colyseus.algoridev.com/privkey.pem",
+        SSL_CERT: "/etc/letsencrypt/live/server.algoritcom.io/fullchain.pem",
+        SSL_KEY: "/etc/letsencrypt/live/server.algoritcom.io/privkey.pem",
       },
     },
   ],
