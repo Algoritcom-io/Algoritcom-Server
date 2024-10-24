@@ -20,7 +20,7 @@ module.exports = {
       // wait_ready: true,
       env_dev: {
         NODE_ENV: "dev",
-        HTTP_PORT: 2567,
+        HTTP_PORT: 443,
         MAX_WORLDS_PLAYERS: 100,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
@@ -35,7 +35,7 @@ module.exports = {
         MAX_WORLDS_PLAYERS: 100,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
-        BUCKET_URL: "https://platform-public.s3.eu-west-3.amazonaws.com",
+        BUCKET_URL: "https://public.algoritcom.io/platform",
         REDIS_HOST: "localhost",
         REDIS_PORT: 6379,
         REDIS_PASSWORD: "",
