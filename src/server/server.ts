@@ -11,14 +11,14 @@ let httpServer: Server;
 
 if (
   process.env.NODE_ENV === "production" ||
-  process.env.NODE_ENV === "staging"
+  process.env.NODE_ENV === "dev"
 ) {
   const privateKey = readFileSync(
-    "/etc/letsencrypt/live/server.algoritcom.io/privkey.pem",
+    process.env.SSL_KEY ?? "/etc/letsencrypt/live/server.algoritcom.io/privkey.pem",
     "utf8"
   );
   const certificate = readFileSync(
-    "/etc/letsencrypt/live/server.algoritcom.io/fullchain.pem",
+    process.env.SSL_CERT ?? "/etc/letsencrypt/live/server.algoritcom.io/fullchain.pem",
     "utf8"
   );
   httpServer = createHttpsServer(

@@ -20,7 +20,7 @@ module.exports = {
       // wait_ready: true,
       env_dev: {
         NODE_ENV: "dev",
-        HTTP_PORT: 2567,
+        HTTP_PORT: 443,
         MAX_WORLDS_PLAYERS: 100,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
