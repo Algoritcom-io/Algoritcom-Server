@@ -4,6 +4,7 @@ import { ChatAction } from "../types/chat";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
 import { GameServer } from "./game/gameServer";
+import { io } from "./io";
 import playerController from "./players/players";
 import { WorldServer } from "./world/worldServer";
 
@@ -18,7 +19,6 @@ class ServerController {
   }
 
   public async joinPlayerToWorld(data: JionWorldData, socketID: string) {
-    logger.info(`Player ${socketID} joining world ${data.worldName}`);
     let world = this.worlds.get(data.worldName);
     let player = playerController.getPlayer(socketID);
     if (!player) {
@@ -34,7 +34,6 @@ class ServerController {
     if (!spawns) {
       throw new Error("Spawns not found");
     }
-
     const spawn = await world.getAvailableSpawnPoint(instance.players);
 
     player.inWorld.name = world.name;
@@ -43,22 +42,28 @@ class ServerController {
     player.position = spawn;
     player.rotation = { x: 0, y: 0, z: 0, w: 0 };
     player.modelUrl = data.modelUrl;
+
     instance.addPlayer(socketID);
+
+    logger.info(`Player ${socketID} joined world ${data.worldName}`);
   }
 
-  public leavePlayer(socketID: string) {
-    const player = playerController.getPlayer(socketID);
-    const worldType = player.inWorld.type;
-
-    switch (worldType) {
-      case WorldTypes.world:
-        this.leavePlayerFromWorld(socketID);
-        break;
-      case WorldTypes.game:
-        this.leavePlayerFromGame(socketID);
-        break;
-      default:
-        throw new Error("World type not found");
+  public async leavePlayer(socketID: string) {
+    const player = await playerController.getPlayer(socketID);
+    if (player) {
+      const worldType = player.inWorld.type;
+      io.sockets.to("presence").emit("presence:leave", player.id);
+      logger.info(`Left general and notifications: ${socketID}`);
+      switch (worldType) {
+        case WorldTypes.world:
+          this.leavePlayerFromWorld(socketID);
+          break;
+        case WorldTypes.game:
+          this.leavePlayerFromGame(socketID);
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -147,6 +152,24 @@ class ServerController {
       if (socket) {
         socket.to(player.inWorld.instance).emit("game-notification", data);
       }
+    }
+  }
+
+  public async sendFriendPresence(playerID: string, friendsIds: string[]) {
+    const player = playerController.getPlayer(playerID);
+    const socket = player.getSocket();
+    if (player && socket) {
+      const friends = await playerController.getFriendsPresence(friendsIds);
+      socket.emit("presence:friends", friends);
+    }
+  }
+
+  public async sendWorldPresence(playerID: string, worldName: string) {
+    const player = playerController.getPlayer(playerID);
+    const socket = player.getSocket();
+    if (player && socket && worldName) {
+      const players = playerController.getPlayersInWorld(worldName);
+      socket.emit("presence:world", players);
     }
   }
 }

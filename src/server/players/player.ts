@@ -12,16 +12,23 @@ export class Player implements IPlayer {
   rotation: { x: number; y: number; z: number; w: number };
   animation: string;
   modelUrl: string;
+  isGuest: boolean;
   inWorld: { name: string; instance: string; type: WorldTypes | null };
   initialPosition?: Spawn;
 
-  constructor(id: string, name: string, sessionId: string) {
+  constructor(
+    id: string,
+    name: string,
+    sessionId: string,
+    isGuest: boolean = false
+  ) {
     this.id = id;
     this.name = name;
     this.sessionId = sessionId;
     this.position = { x: 0, y: 0, z: 0 };
     this.rotation = { x: 0, y: 0, z: 0, w: 0 };
     this.animation = "idle";
+    this.isGuest = isGuest;
     this.modelUrl = "";
     this.inWorld = { name: "", instance: "", type: null };
   }

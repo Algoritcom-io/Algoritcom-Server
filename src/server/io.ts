@@ -19,21 +19,48 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   if (socket.handshake.query.id) {
+    const isGuest = `${socket.handshake.query.isGuest}` === "true";
     socket.join("general");
+    socket.join("presence");
     socket.join("notifications");
-    logger.info(`Joined general and notifications: ${socket.id}`);
+
     if (socket.handshake.query.id && socket.handshake.query.name) {
       try {
         playerController.createPlayer(
           `${socket.handshake.query.id}`,
           `${socket.handshake.query.name}`,
-          socket.id
+          socket.id,
+          isGuest
         );
+        socket.to("presence").emit("presence:join", {
+          id: socket.handshake.query.id,
+          world: "",
+          instance: "",
+          status: true,
+        });
+        logger.info(`Joined general and notifications: ${socket.id}`);
       } catch (error: any) {
         logger.error(error?.message);
       }
     }
   }
+
+  // Presence functions
+  socket.on("presence:friends", (friends: string[]) => {
+    try {
+      serverController.sendFriendPresence(socket.id, friends);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
+  });
+
+  socket.on("presence:world", (world: string) => {
+    try {
+      serverController.sendWorldPresence(socket.id, world);
+    } catch (error: any) {
+      logger.error(error?.message);
+    }
+  });
 
   /* World functions */
 
@@ -110,9 +137,6 @@ io.on("connection", (socket) => {
   /* Disconnect */
 
   socket.on("disconnect", () => {
-    socket.leave("general");
-    socket.leave("notifications");
-    logger.info(`Left general and notifications: ${socket.id}`);
     try {
       serverController.leavePlayer(socket.id);
     } catch (error: any) {

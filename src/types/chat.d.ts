@@ -12,6 +12,10 @@ export interface User {
   sessionId: string;
 }
 
+export interface Friend extends Pick<User, "id" | "name" | "sessionId"> {
+  online: boolean;
+}
+
 export interface Chat {
   message?: string;
 }
@@ -31,4 +35,16 @@ export interface ChatAction {
   type: ChatActionTypes;
   message?: Message;
   action?: WritingAction;
+}
+
+export interface Presence {
+  id: string;
+  name: string;
+  world: string;
+  instance: string;
+  status: boolean;
+}
+
+export interface Presences {
+  [key: string]: Presence;
 }

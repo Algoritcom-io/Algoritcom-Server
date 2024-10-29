@@ -1,6 +1,6 @@
 import { MessageTypes, WritingAction } from "../../enums";
 import { logger } from "../../logger/logger";
-import { Message } from "../../types/chat";
+import { Friend, Message, Presence } from "../../types/chat";
 import { io } from "../io";
 import playerController from "../players/players";
 

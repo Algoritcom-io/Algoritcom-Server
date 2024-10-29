@@ -33,7 +33,6 @@ export class WorldServer implements IWorld {
     } catch (error: any) {
       this.status = "noSettings";
       logger.error(`Game ${this.name} error: ${error.message}`);
-      throw error;
     }
   }
 
