@@ -70,4 +70,13 @@ export class Player implements IPlayer {
       initialPosition: this.initialPosition,
     };
   }
+
+  public emitPresence() {
+    io.sockets.to("presence").emit("presence:join", {
+      id: this.id,
+      world: this.inWorld.name,
+      instance: this.inWorld.instance,
+      status: true,
+    });
+  }
 }

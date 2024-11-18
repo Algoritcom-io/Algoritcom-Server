@@ -1,9 +1,8 @@
-import { cloneDeep, find, findKey, get, map } from "lodash";
+import { find, map } from "lodash";
 import { logger } from "../../logger/logger";
-import { IPlayer, IPlayerMove } from "../../types/player";
+import { IPlayerMove } from "../../types/player";
 import { Player } from "./player";
-import { Presence, Presences } from "../../types/chat";
-import { Socket } from "socket.io";
+import { Presence } from "../../types/chat";
 
 class PlayerController {
   private players: Map<string, Player>;
@@ -53,10 +52,22 @@ class PlayerController {
     throw new Error(`Player with id ${id} not found`);
   }
 
-  public getPlayersInWorld(world: string): Player[] {
-    const players = find(this.players, { inWorld: { name: world } });
-    if (players) {
-      return Object.values(players);
+  public async getPlayersInWorld(
+    world: string
+  ): Promise<Pick<Player, "id" | "name">[]> {
+    const players = Array.from(this.players.values());
+    const inWorld = players.filter((player) => player.inWorld.name === world);
+    const result = await map(inWorld, (player) => {
+      return {
+        id: player.id,
+        name: player.name,
+        world: player.inWorld.name,
+        instance: player.inWorld.instance,
+        status: true,
+      };
+    });
+    if (result) {
+      return result;
     }
     return [];
   }
@@ -121,7 +132,10 @@ class PlayerController {
 
   public async getWorldPresence(world: string): Promise<Presence[]> {
     const presences: Presence[] = [];
-    await this.players.forEach((player) => {
+    const players = Array.from(this.players.values());
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
+
       if (player.inWorld.name === world) {
         presences.push({
           id: player.id,
@@ -131,7 +145,7 @@ class PlayerController {
           status: true,
         });
       }
-    });
+    }
     return presences;
   }
 }

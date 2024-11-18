@@ -1,6 +1,5 @@
 import { WorldTypes } from "../enums";
 import { logger } from "../logger/logger";
-import { ChatAction } from "../types/chat";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
 import { GameServer } from "./game/gameServer";
@@ -44,6 +43,7 @@ class ServerController {
     player.modelUrl = data.modelUrl;
 
     instance.addPlayer(socketID);
+    player.emitPresence();
 
     logger.info(`Player ${socketID} joined world ${data.worldName}`);
   }

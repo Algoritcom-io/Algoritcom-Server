@@ -8,7 +8,7 @@ import { IPlayerMove } from "../types/player";
 import { JoinGameData } from "../types/games";
 import chatController from "./chat/chatController";
 import { WritingAction } from "../enums";
-import { Message } from "../types/chat";
+import { ChatMessage, Message } from "../types/chat";
 
 const io = new Server(httpServer, {
   // parser: customParser,
@@ -126,7 +126,7 @@ io.on("connection", (socket) => {
     serverController.gameFinished(socket.id);
   });
 
-  socket.on("chat-message", (data: Message) => {
+  socket.on("chat-message", (data: ChatMessage) => {
     chatController.message(socket.id, data);
   });
 

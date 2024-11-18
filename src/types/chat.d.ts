@@ -20,6 +20,12 @@ export interface Chat {
   message?: string;
 }
 
+export interface ChatMessage {
+  from?: string;
+  to?: string;
+  message: Message;
+}
+
 export interface Message {
   id: string;
   conversationId: string;
@@ -29,12 +35,6 @@ export interface Message {
   updatedAt: string;
   status?: MessageStatus;
   type: MessageTypes;
-}
-
-export interface ChatAction {
-  type: ChatActionTypes;
-  message?: Message;
-  action?: WritingAction;
 }
 
 export interface Presence {
