@@ -1,11 +1,11 @@
-import { app, http } from "./server/server";
+import { httpServer } from "./server/server"; // Importa ambos servidores
 import "./server/io";
 import "./server/serverController";
+import { logger } from "./logger/logger";
 
-const port = app.get("port");
+const httpPort = process.env.HTTP_PORT || 443;
 
-http.listen(port, () => {
-  /* eslint-disable no-console */
-  console.log("Server is running on http://localhost:" + app.get("port"));
-  /* eslint-enable no-console */
+// Levantamos el servidor HTTP
+httpServer.listen(httpPort, () => {
+  logger.info(`Servidor HTTP corriendo en el puerto ${httpPort}`);
 });

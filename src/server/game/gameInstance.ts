@@ -4,7 +4,8 @@ import { logger } from "../../logger/logger";
 import playerController from "../players/players";
 import { io } from "../io";
 import { Player } from "../players/player";
-import { Items } from "../../types/settings";
+import { Items, Spawn } from "../../types/settings";
+import { cloneDeep } from "lodash";
 
 export class GameInstance implements IGameInstance {
   public id: string;
@@ -13,16 +14,18 @@ export class GameInstance implements IGameInstance {
   public timer?: ReturnType<typeof setInterval>;
   public time = 60;
   public items?: Items[];
+  public spawns?: Spawn[];
   public deleteInstance: (id: string) => void;
 
   constructor(
     gameName: string,
     deleteInstance: (id: string) => void,
-    items?: Items[]
+    items?: Items[],
+    spawns?: Spawn[]
   ) {
     this.id = gameName + "_" + uuidv4().replace(/-/g, "").substring(0, 10);
     this.items = items;
-    this.timer = this.startTimer();
+    this.spawns = cloneDeep(spawns);
     this.players = new Map();
     this.deleteInstance = deleteInstance;
     logger.info(`Game ${gameName} instance ${this.id} created`);
@@ -37,13 +40,38 @@ export class GameInstance implements IGameInstance {
       const socket = io.sockets.sockets.get(player.sessionId);
       if (socket) {
         socket.join(this.id);
-        const playersData = [];
-        for (const player of this.players.values()) {
-          const playerData = player.getTransferData();
-          playersData.push(playerData);
-        }
         this.players.set(playerId, player);
-        socket.emit("world-players", playersData);
+        const playersData = [];
+
+        const players = Array.from(this.players.values());
+        for (let i = 0; i < players.length; i++) {
+          const player = players[i];
+          const spawn = this.spawns ? this.spawns[i] : null;
+          if (!player.initialPosition && spawn) {
+            player.position = {
+              x: spawn.ubication[0],
+              y: spawn.ubication[1],
+              z: spawn.ubication[2],
+            };
+            player.initialPosition = spawn;
+          }
+          playersData.push(player.getPlayerGameStart());
+        }
+
+        if (this.players.size === 1 && !this.gameStarted && !this.timer) {
+          logger.info(`Game ${this.id} waiting for players`);
+          io.sockets.to(this.id).emit("game-waiting-for-players");
+        } else if (
+          this.players.size === 2 &&
+          !this.gameStarted &&
+          !this.timer
+        ) {
+          this.timer = this.startTimer();
+        }
+        socket.emit(
+          "world-players",
+          playersData.filter((p) => p.sessionId !== playerId)
+        );
         io.sockets.to(this.id).emit("player-added", player);
         this.sendInitalConfig(playerId);
         logger.info(`Player ${playerId} joined game ${this.id}`);
@@ -67,18 +95,34 @@ export class GameInstance implements IGameInstance {
       socket.leave(this.id);
       logger.warning(`Player ${playerId} left game ${this.id}`);
     }
+    logger.debug(`Game ${this.id} players: ${this.players.size}`);
+    logger.info(`Player ${playerId} left game ${this.id}`);
+    logger.debug(`Game restarter: ${this.gameStarted}`);
+
     this.players.delete(playerId);
+
+    if (this.gameStarted === false && this.players.size === 1) {
+      logger.info(`Game ${this.id} waiting for players`);
+      clearInterval(this.timer);
+      this.timer = undefined;
+      io.sockets.to(this.id).emit("game-waiting-for-players");
+    }
+
+    if (this.players.size < 1) {
+      this.endGame();
+    }
   }
 
   public startGame() {
     this.gameStarted = true;
     clearInterval(this.timer);
+    this.timer = undefined;
     io.sockets.to(this.id).emit("game-start");
     logger.info(`Game ${this.id} started`);
   }
 
   public startTimer(): ReturnType<typeof setInterval> {
-    return (this.timer = setInterval(() => {
+    return setInterval(() => {
       if (this.time > 0) {
         this.time--;
         logger.info(
@@ -91,7 +135,7 @@ export class GameInstance implements IGameInstance {
       } else if (this.time === 0) {
         this.startGame();
       }
-    }, 1000));
+    }, 1000);
   }
 
   public endGame() {
@@ -105,11 +149,11 @@ export class GameInstance implements IGameInstance {
 
   public sendInitalConfig(playerId: string) {
     const player = playerController.getPlayer(playerId);
-    console.log(this.items);
     if (!player) {
       throw new Error("Player not found");
     }
+    const items = cloneDeep(this.items);
 
-    io.sockets.to(player.sessionId).emit("game-config", this.items);
+    io.sockets.to(player.sessionId).emit("game-config", items);
   }
 }

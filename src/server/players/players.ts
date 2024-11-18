@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { logger } from "../../logger/logger";
 import { IPlayer, IPlayerMove } from "../../types/player";
 import { Player } from "./player";
@@ -13,10 +14,10 @@ class PlayerController {
   public createPlayer(
     id: string,
     name: string,
-    modelURL: string,
-    sessionId: string
+    sessionId: string,
+    modelURL?: string
   ): IPlayer {
-    const player = new Player(id, name, sessionId, modelURL);
+    const player = new Player(id, name, sessionId);
     this.players.set(sessionId, player);
     logger.success(
       `Player ${name} created (sessionId: ${sessionId}) - model: ${modelURL}`
@@ -32,7 +33,12 @@ class PlayerController {
     return player;
   }
 
-  public updatePlayer(id: string, player: Player): Player {
+  public updatePlayer(id: string, data: Partial<Player>): Player {
+    let player = this.players.get(id);
+    if (!player) {
+      throw new Error(`Player with id ${id} not found`);
+    }
+    Object.assign(player, data);
     this.players.set(id, player);
     return player;
   }
@@ -48,13 +54,13 @@ class PlayerController {
       player.rotation.z = data.rotation.z;
       player.rotation.w = data.rotation.w;
       player.animation = data.animation;
-      logger.debug(
-        `Player ${player.name} moved to [${data.position.x.toFixed(
-          1
-        )}, ${data.position.y.toFixed(1)}, ${data.position.z.toFixed(
-          1
-        )}] - animation: ${data.animation}`
-      );
+      // logger.debug(
+      //   `Player ${player.name} moved to [${data.position.x.toFixed(
+      //     1
+      //   )}, ${data.position.y.toFixed(1)}, ${data.position.z.toFixed(
+      //     1
+      //   )}] - animation: ${data.animation}`
+      // );
       player.emitPlayerMoved();
     }
   }

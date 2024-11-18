@@ -15,7 +15,7 @@ export interface ISpace {
   maxPlayers: number;
   settings?: Settings;
   type: WorldTypes;
-  status: "initializing" | "ready" | "error";
+  status: "initializing" | "ready" | "noSettings" | "error";
 
   private loadSettings(): Promise<void>;
   createInstance(): IWorldInstance;
@@ -29,6 +29,5 @@ export interface IWorld extends ISpace {
 
 export interface JionWorldData {
   worldName: string;
-  position: { x: number; y: number; z: number };
-  rotation: { x: number; y: number; z: number; w: number };
+  modelUrl: string;
 }

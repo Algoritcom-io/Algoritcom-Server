@@ -18,7 +18,7 @@
 //       matchmaking: true,
 //       queue: [],
 //       instances: new Map(),
-//       maxPlayers: Number(process.env.MAX_GAMES_PLAYERS) || 8,
+//       maxPlayers: Number(8) || 8,
 //       spawnPoints: [],
 //       timer: null,
 //       countdown: 0,

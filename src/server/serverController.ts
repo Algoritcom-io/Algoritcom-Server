@@ -1,5 +1,6 @@
 import { WorldTypes } from "../enums";
 import { logger } from "../logger/logger";
+import { ChatAction } from "../types/chat";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
 import { GameServer } from "./game/gameServer";
@@ -16,22 +17,32 @@ class ServerController {
     logger.warning("Server Controller initialized");
   }
 
-  public joinPlayerToWorld(playerData: JionWorldData, socketID: string) {
-    let world = this.worlds.get(playerData.worldName);
+  public async joinPlayerToWorld(data: JionWorldData, socketID: string) {
+    logger.info(`Player ${socketID} joining world ${data.worldName}`);
+    let world = this.worlds.get(data.worldName);
     let player = playerController.getPlayer(socketID);
     if (!player) {
       throw new Error(`Player with id ${socketID} not found`);
     }
     if (!world) {
-      world = new WorldServer(playerData.worldName);
-      this.worlds.set(playerData.worldName, world);
+      world = new WorldServer(data.worldName);
+      await world.loadSettings();
+      this.worlds.set(data.worldName, world);
     }
     const instance = world.getAvailableInstance();
+    const spawns = world.settings?.spawns;
+    if (!spawns) {
+      throw new Error("Spawns not found");
+    }
+
+    const spawn = await world.getAvailableSpawnPoint(instance.players);
+
     player.inWorld.name = world.name;
     player.inWorld.type = world.type;
     player.inWorld.instance = instance.id;
-    player.position = playerData.position;
-    player.rotation = playerData.rotation;
+    player.position = spawn;
+    player.rotation = { x: 0, y: 0, z: 0, w: 0 };
+    player.modelUrl = data.modelUrl;
     instance.addPlayer(socketID);
   }
 
@@ -73,15 +84,16 @@ class ServerController {
 
     player.inWorld.name = game.name;
     player.inWorld.type = game.type;
+    player.modelUrl = data.modelUrl;
     player.inWorld.instance = "";
     logger.info(`Player ${playerID} joined game ${game.name}`);
   }
 
-  public JoinGameInstance(playerID: string) {
+  public async JoinGameInstance(playerID: string) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
     if (player && game) {
-      const instance = game.getAvailableInstance();
+      const instance = await game.getAvailableInstance();
       player.inWorld.instance = instance.id;
       instance.addPlayer(playerID);
     }
@@ -100,14 +112,40 @@ class ServerController {
     }
   }
 
-  public message(playerID: string, data: any) {
+  public async finishAndStartGame(playerID: string) {
     const player = playerController.getPlayer(playerID);
     const game = this.games.get(player.inWorld.name);
-    logger.info(`Message from player ${playerID} - ${data.type}`);
+    if (player && game) {
+      const instance = await game.getInstance(player.inWorld.instance);
+      if (instance) {
+        instance.removePlayer(playerID);
+      }
+      this.JoinGameInstance(playerID);
+    }
+  }
+
+  public async gameFinished(playerID: string) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    if (player && game) {
+      const instance = await game.getInstance(player.inWorld.instance);
+      if (instance) {
+        player.inWorld.instance = "";
+        player.inWorld.name = "";
+        player.inWorld.type = null;
+        logger.info(`Game finished for player ${playerID}`);
+      }
+    }
+  }
+
+  public gameNotifiaction(playerID: string, data: any) {
+    const player = playerController.getPlayer(playerID);
+    const game = this.games.get(player.inWorld.name);
+    logger.info(`Notification from player ${playerID} - ${data.type}`);
     if (player && game) {
       const socket = player.getSocket();
       if (socket) {
-        socket.to(player.inWorld.instance).emit("game-message", data);
+        socket.to(player.inWorld.instance).emit("game-notification", data);
       }
     }
   }
