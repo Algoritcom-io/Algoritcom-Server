@@ -34,7 +34,7 @@ module.exports = {
       env_prod: {
         NODE_ENV: "production",
         HTTP_PORT: 443,
-        MAX_WORLDS_PLAYERS: 100,
+        MAX_WORLDS_PLAYERS: 50,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
         BUCKET_URL: "https://public.algoritcom.io/platform",
