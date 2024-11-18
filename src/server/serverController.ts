@@ -3,6 +3,7 @@ import { logger } from "../logger/logger";
 import { ChatAction } from "../types/chat";
 import { JoinGameData } from "../types/games";
 import { IWorld, JionWorldData } from "../types/worlds";
+import { sendUserMetric } from "./aws";
 import { GameServer } from "./game/gameServer";
 import playerController from "./players/players";
 import { WorldServer } from "./world/worldServer";
@@ -44,6 +45,8 @@ class ServerController {
     player.rotation = { x: 0, y: 0, z: 0, w: 0 };
     player.modelUrl = data.modelUrl;
     instance.addPlayer(socketID);
+
+    // sendUserMetric(instance.id, instance.players.size);
   }
 
   public leavePlayer(socketID: string) {
