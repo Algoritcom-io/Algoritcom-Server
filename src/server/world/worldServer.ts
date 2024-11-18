@@ -16,7 +16,7 @@ export class WorldServer implements IWorld {
 
   constructor(name: string) {
     this.name = name;
-    this.maxPlayers = 50;
+    this.maxPlayers = Number(process.env.MAX_WORLDS_PLAYERS) || 50;
     this.type = WorldTypes.world;
     this.instances = new Map();
     this.status = "initializing";
