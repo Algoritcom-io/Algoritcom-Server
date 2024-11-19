@@ -49,21 +49,25 @@ class ServerController {
   }
 
   public async leavePlayer(socketID: string) {
-    const player = await playerController.getPlayer(socketID);
-    if (player) {
-      const worldType = player.inWorld.type;
-      io.sockets.to("presence").emit("presence:leave", player.id);
-      logger.info(`Left general and notifications: ${socketID}`);
-      switch (worldType) {
-        case WorldTypes.world:
-          this.leavePlayerFromWorld(socketID);
-          break;
-        case WorldTypes.game:
-          this.leavePlayerFromGame(socketID);
-          break;
-        default:
-          break;
+    try {
+      const player = await playerController.getPlayer(socketID);
+      if (player) {
+        const worldType = player.inWorld.type;
+        io.sockets.to("presence").emit("presence:leave", player.id);
+        logger.info(`Left general and notifications: ${socketID}`);
+        switch (worldType) {
+          case WorldTypes.world:
+            this.leavePlayerFromWorld(socketID);
+            break;
+          case WorldTypes.game:
+            this.leavePlayerFromGame(socketID);
+            break;
+          default:
+            break;
+        }
       }
+    } catch (error: any) {
+      logger.error(error.message);
     }
   }
 
