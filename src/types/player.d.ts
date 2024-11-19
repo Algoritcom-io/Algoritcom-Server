@@ -8,6 +8,7 @@ export interface IPlayer {
   animation: string;
   name: string;
   modelUrl: string;
+  isGuest: boolean;
   inWorld: {
     name: string;
     instance: string;

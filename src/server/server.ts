@@ -6,6 +6,7 @@ import { createServer as createHttpsServer } from "node:https";
 
 const app = express();
 app.set("trust proxy", true);
+app.use(express.json());
 
 let httpServer: Server;
 
