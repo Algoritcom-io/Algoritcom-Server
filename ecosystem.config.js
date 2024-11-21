@@ -21,7 +21,7 @@ module.exports = {
       env_dev: {
         NODE_ENV: "dev",
         HTTP_PORT: 443,
-        MAX_WORLDS_PLAYERS: 100,
+        MAX_WORLDS_PLAYERS: 20,
         MAX_GAMES_PLAYERS: 8,
         MAX_GAME_WAITING_TIME: 60000,
         BUCKET_URL: "https://platform-public.s3.eu-west-3.amazonaws.com",
