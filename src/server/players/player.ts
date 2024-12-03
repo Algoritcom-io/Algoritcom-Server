@@ -7,6 +7,7 @@ import { io } from "../io";
 export class Player implements IPlayer {
   id: string;
   name: string;
+  username: string;
   sessionId: string;
   position: { x: number; y: number; z: number };
   rotation: { x: number; y: number; z: number; w: number };
@@ -19,11 +20,13 @@ export class Player implements IPlayer {
   constructor(
     id: string,
     name: string,
+    username: string,
     sessionId: string,
     isGuest: boolean = false
   ) {
     this.id = id;
     this.name = name;
+    this.username = username;
     this.sessionId = sessionId;
     this.position = { x: 0, y: 0, z: 0 };
     this.rotation = { x: 0, y: 0, z: 0, w: 0 };

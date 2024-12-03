@@ -7,6 +7,7 @@ export interface IPlayer {
   rotation: { x: number; y: number; z: number; w: number };
   animation: string;
   name: string;
+  username: string;
   modelUrl: string;
   isGuest: boolean;
   inWorld: {

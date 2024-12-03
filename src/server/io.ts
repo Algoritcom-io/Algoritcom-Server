@@ -7,8 +7,10 @@ import { JionWorldData } from "../types/worlds";
 import { IPlayerMove } from "../types/player";
 import { JoinGameData } from "../types/games";
 import chatController from "./chat/chatController";
+import notificationController from "./notifications/notificationController";
 import { WritingAction } from "../enums";
 import { ChatMessage, Message } from "../types/chat";
+import { Notification } from "../types/notification";
 
 const io = new Server(httpServer, {
   // parser: customParser,
@@ -29,11 +31,14 @@ io.on("connection", (socket) => {
         playerController.createPlayer(
           `${socket.handshake.query.id}`,
           `${socket.handshake.query.name}`,
+          `${socket.handshake.query.username}`,
           socket.id,
           isGuest
         );
         socket.to("presence").emit("presence:join", {
           id: socket.handshake.query.id,
+          name: socket.handshake.query.name,
+          username: socket.handshake.query.username,
           world: "",
           instance: "",
           status: true,
@@ -130,8 +135,16 @@ io.on("connection", (socket) => {
     chatController.message(socket.id, data);
   });
 
+  socket.on("private-message", (data: ChatMessage) => {
+    chatController.message(socket.id, data);
+  });
+
   socket.on("chat-writing", (data: WritingAction) => {
     chatController.writing(socket.id, data);
+  });
+
+  socket.on("notification", (data: Notification) => {
+    notificationController.sendNotification(socket.id, data);
   });
 
   /* Disconnect */

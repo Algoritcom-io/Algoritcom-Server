@@ -15,6 +15,7 @@ class PlayerController {
   public async createPlayer(
     id: string,
     name: string,
+    username: string,
     sessionId: string,
     isGuest: boolean
   ): Promise<Player> {
@@ -27,7 +28,7 @@ class PlayerController {
       logger.error(error?.message);
     }
 
-    const player = new Player(id, name, sessionId, isGuest);
+    const player = new Player(id, name, username, sessionId, isGuest);
     this.players.set(sessionId, player);
     logger.success(
       `Player ${name} created (sessionId: ${sessionId}) - isGuest: ${isGuest}`
