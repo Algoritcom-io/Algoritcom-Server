@@ -31,3 +31,18 @@ export enum WritingAction {
   ACTIVE = "active",
   INACTIVE = "inactive",
 }
+
+export enum NotificationTypes {
+  WORLD = "world",
+  GAME = "game",
+  GENERAL = "general",
+  SOCIAL = "social",
+}
+
+export enum SocialNotificationActions {
+  FRIEND_REQUEST = "friend_request",
+  FRIEND_REQUEST_ACCEPTED = "friend_request_accepted",
+  FRIEND_REQUEST_REJECTED = "friend_request_rejected",
+  FRIEND_REQUEST_CANCELED = "friend_request_canceled",
+  FRIEND_REMOVED = "friend_removed",
+}
